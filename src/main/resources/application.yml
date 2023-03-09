@@ -1,0 +1,21 @@
+server:
+  port: 9002
+spring:
+  application:
+    name: spring-kafka-stream-processore
+  kafka:
+    bootstrap-servers: localhost:9091,localhost:9092,localhost:9093,localhost:9094,localhost:9095
+    consumer:
+      bootstrap-servers: localhost:9091,localhost:9092,localhost:9093,localhost:9094,localhost:9095
+      group-id: groooo
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9091,localhost:9092,localhost:9093,localhost:9094,localhost:9095
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    streams:
+      properties:
+        application.server: localhost:${server.port}
+        state.dir: ${spring.application.name}${server.port}
