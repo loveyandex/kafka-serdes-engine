@@ -1,0 +1,41 @@
+package com.kafka.kafkaserdes.runs;
+
+import java.util.Properties;
+
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Consumed;
+
+import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.KafkaStreams;
+
+import com.kafka.kafkaserdes.joson.Order;
+
+public class OrderStreamProccessing {
+      public static void main(final String[] args) throws Exception {
+            Properties props = new Properties();
+            props.put(StreamsConfig.APPLICATION_ID_CONFIG, "quickstart-app"); 
+            props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+            props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Order.class);
+
+            StreamsBuilder builder = new StreamsBuilder();
+
+            KStream<String, Order> orderStream = builder.stream("btc_usdt-orderbooks");
+
+            KStream<String, Order> orderStreamlimit = orderStream
+                        .filter((key, value) -> value.getType().equals("limit"));
+            
+
+
+            // wordCounts.toStream().to("WordsWithCountsTopic0",
+            // Produced.with(Serdes.String(), Serdes.Long()));
+
+            KafkaStreams streams = new KafkaStreams(builder.build(), props);
+            streams.start();
+      }
+
+}

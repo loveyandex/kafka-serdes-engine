@@ -5,6 +5,7 @@ import com.kafka.kafkaserdes.joson.*;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+import java.math.BigDecimal;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -21,15 +22,17 @@ public class Prducer {
                         "localhost:9091,localhost:9092,localhost:9093,localhost:9094,localhost:9095");
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                         "org.apache.kafka.common.serialization.StringSerializer");
-            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JSONSerde.class);
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Order.class);
 
-            KafkaProducer<String, PageView> producer = new KafkaProducer<String, PageView>(props);
+            KafkaProducer<String, Order> producer = new KafkaProducer<String, Order>(props);
 
             while (true) {
+                  BigDecimal bd1 = new BigDecimal(Math.random());
+                  BigDecimal bd2 = new BigDecimal(Math.random()*10000+9999);
 
-                  PageView x = new PageView("ss", "ss", System.currentTimeMillis());
-                  ProducerRecord<String, PageView> record = new ProducerRecord<String, PageView>(
-                              "SystemConfig.topicName", "", x);
+                  Order x = new Order(System.currentTimeMillis(),"BTC_USDT", "limit", "buy", "open", bd1,bd2);
+                  ProducerRecord<String, Order> record = new ProducerRecord<String, Order>(
+                              "btc_usdt-orderbooks", "btc_usdt", x);
 
                   try {
                         RecordMetadata recordMetadata = producer.send(record).get();
@@ -42,7 +45,7 @@ public class Prducer {
                         e.printStackTrace();
                   }
 
-                  Thread.sleep(1000 * 5);
+                  Thread.sleep(10);
 
             }
 
