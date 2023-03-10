@@ -18,7 +18,8 @@ import com.kafka.kafkaserdes.joson.Order;
 public class OrderStreamProccessing {
       public static void main(final String[] args) throws Exception {
             Properties props = new Properties();
-            props.put(StreamsConfig.APPLICATION_ID_CONFIG, "quickstart-app"); 
+            props.put(StreamsConfig.APPLICATION_ID_CONFIG, "orderbook-app");
+            props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
             props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
             props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Order.class);
 
@@ -28,11 +29,9 @@ public class OrderStreamProccessing {
 
             KStream<String, Order> orderStreamlimit = orderStream
                         .filter((key, value) -> value.getType().equals("limit"));
-            
 
-
-            // wordCounts.toStream().to("WordsWithCountsTopic0",
-            // Produced.with(Serdes.String(), Serdes.Long()));
+            orderStreamlimit.to("btc_usdt-limit-orderbooks",
+                        Produced.with(Serdes.String(), new Order()));
 
             KafkaStreams streams = new KafkaStreams(builder.build(), props);
             streams.start();

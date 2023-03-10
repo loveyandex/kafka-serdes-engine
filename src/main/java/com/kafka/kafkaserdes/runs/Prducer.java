@@ -36,7 +36,7 @@ public class Prducer {
 
                   try {
                         RecordMetadata recordMetadata = producer.send(record).get();
-                        System.out.println(record);
+                        // System.out.println(record);
                   } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -45,7 +45,7 @@ public class Prducer {
                         e.printStackTrace();
                   }
 
-                  Thread.sleep(10);
+                  Thread.sleep(1);
 
             }
 
